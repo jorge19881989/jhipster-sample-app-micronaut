@@ -6,11 +6,9 @@ import io.github.jhipster.sample.repository.timezone.DateTimeWrapperRepository;
 import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.sql.DataSource;
 import java.time.*;
 import java.time.format.DateTimeFormatter;

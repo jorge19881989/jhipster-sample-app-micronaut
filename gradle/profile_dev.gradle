@@ -6,7 +6,6 @@ configurations {
 }
 
 dependencies {
-    developmentOnly "org.springframework.boot:spring-boot-devtools"
     implementation "com.h2database:h2"
 }
 
@@ -16,18 +15,6 @@ if (project.hasProperty("no-liquibase")) {
 }
 if (project.hasProperty("tls")) {
     profiles += ",tls"
-}
-
-springBoot {
-    buildInfo {
-        properties {
-            time = null
-        }
-    }
-}
-
-bootRun {
-    args = []
 }
 
 task webpack(type: NpmTask) {
@@ -60,4 +47,3 @@ processResources {
 }
 
 processResources.dependsOn webpack
-bootJar.dependsOn processResources
