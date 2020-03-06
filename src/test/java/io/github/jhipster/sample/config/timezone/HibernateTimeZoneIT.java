@@ -38,10 +38,10 @@ public class HibernateTimeZoneIT {
     @BeforeEach
     public void setup() {
         dateTimeWrapper = new DateTimeWrapper();
-        dateTimeWrapper.setInstant(Instant.parse("2014-11-12T05:50:00.0Z"));
-        dateTimeWrapper.setLocalDateTime(LocalDateTime.parse("2014-11-12T07:50:00.0"));
-        dateTimeWrapper.setOffsetDateTime(OffsetDateTime.parse("2011-12-14T08:30:00.0Z"));
-        dateTimeWrapper.setZonedDateTime(ZonedDateTime.parse("2011-12-14T08:30:00.0Z"));
+        dateTimeWrapper.setInstant(Instant.parse("2014-11-12T05:50:00.1Z"));
+        dateTimeWrapper.setLocalDateTime(LocalDateTime.parse("2014-11-12T07:50:00.1"));
+        dateTimeWrapper.setOffsetDateTime(OffsetDateTime.parse("2011-12-14T08:30:00.1Z"));
+        dateTimeWrapper.setZonedDateTime(ZonedDateTime.parse("2011-12-14T08:30:00.1Z"));
         dateTimeWrapper.setLocalTime(LocalTime.parse("14:30:00"));
         dateTimeWrapper.setOffsetTime(OffsetTime.parse("14:30:00+02:00"));
         dateTimeWrapper.setLocalDate(LocalDate.parse("2016-09-10"));
