@@ -3,18 +3,22 @@ package io.github.jhipster.sample.config.timezone;
 import io.github.jhipster.sample.JhipsterSampleApplicationApp;
 import io.github.jhipster.sample.repository.timezone.DateTimeWrapper;
 import io.github.jhipster.sample.repository.timezone.DateTimeWrapperRepository;
+
+import io.micronaut.data.jdbc.runtime.JdbcOperations;
 import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import javax.sql.DataSource;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 /**
  * Integration tests for the UTC Hibernate configuration.
@@ -23,13 +27,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class HibernateTimeZoneIT {
 
     @Inject DateTimeWrapperRepository dateTimeWrapperRepository;
-    @Inject DataSource dataSource;
+    @Inject JdbcOperations jdbcOperations;
 
     private DateTimeWrapper dateTimeWrapper;
     private DateTimeFormatter dateTimeFormatter;
     private DateTimeFormatter timeFormatter;
     private DateTimeFormatter dateFormatter;
-    private JdbcTemplate jdbcTemplate;
+
 
     @BeforeEach
     public void setup() {
@@ -52,8 +56,6 @@ public class HibernateTimeZoneIT {
 
         dateFormatter = DateTimeFormatter
             .ofPattern("yyyy-MM-dd");
-
-        jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
     @Test
@@ -62,7 +64,7 @@ public class HibernateTimeZoneIT {
         dateTimeWrapperRepository.saveAndFlush(dateTimeWrapper);
 
         String request = generateSqlRequest("instant", dateTimeWrapper.getId());
-        SqlRowSet resultSet = jdbcTemplate.queryForRowSet(request);
+        ResultSet resultSet = jdbcOperations.prepareStatement(request, statement -> statement.executeQuery());
         String expectedValue = dateTimeFormatter.format(dateTimeWrapper.getInstant());
 
         assertThatDateStoredValueIsEqualToInsertDateValueOnGMTTimeZone(resultSet, expectedValue);
@@ -74,7 +76,7 @@ public class HibernateTimeZoneIT {
         dateTimeWrapperRepository.saveAndFlush(dateTimeWrapper);
 
         String request = generateSqlRequest("local_date_time", dateTimeWrapper.getId());
-        SqlRowSet resultSet = jdbcTemplate.queryForRowSet(request);
+        ResultSet resultSet = jdbcOperations.prepareStatement(request, statement -> statement.executeQuery());
         String expectedValue = dateTimeWrapper
             .getLocalDateTime()
             .atZone(ZoneId.systemDefault())
@@ -89,7 +91,7 @@ public class HibernateTimeZoneIT {
         dateTimeWrapperRepository.saveAndFlush(dateTimeWrapper);
 
         String request = generateSqlRequest("offset_date_time", dateTimeWrapper.getId());
-        SqlRowSet resultSet = jdbcTemplate.queryForRowSet(request);
+        ResultSet resultSet = jdbcOperations.prepareStatement(request, statement -> statement.executeQuery());
         String expectedValue = dateTimeWrapper
             .getOffsetDateTime()
             .format(dateTimeFormatter);
@@ -103,7 +105,7 @@ public class HibernateTimeZoneIT {
         dateTimeWrapperRepository.saveAndFlush(dateTimeWrapper);
 
         String request = generateSqlRequest("zoned_date_time", dateTimeWrapper.getId());
-        SqlRowSet resultSet = jdbcTemplate.queryForRowSet(request);
+        ResultSet resultSet = jdbcOperations.prepareStatement(request, statement -> statement.executeQuery());
         String expectedValue = dateTimeWrapper
             .getZonedDateTime()
             .format(dateTimeFormatter);
@@ -117,7 +119,7 @@ public class HibernateTimeZoneIT {
         dateTimeWrapperRepository.saveAndFlush(dateTimeWrapper);
 
         String request = generateSqlRequest("local_time", dateTimeWrapper.getId());
-        SqlRowSet resultSet = jdbcTemplate.queryForRowSet(request);
+        ResultSet resultSet = jdbcOperations.prepareStatement(request, statement -> statement.executeQuery());
         String expectedValue = dateTimeWrapper
             .getLocalTime()
             .atDate(LocalDate.of(1970, Month.JANUARY, 1))
@@ -133,7 +135,7 @@ public class HibernateTimeZoneIT {
         dateTimeWrapperRepository.saveAndFlush(dateTimeWrapper);
 
         String request = generateSqlRequest("offset_time", dateTimeWrapper.getId());
-        SqlRowSet resultSet = jdbcTemplate.queryForRowSet(request);
+        ResultSet resultSet = jdbcOperations.prepareStatement(request, statement -> statement.executeQuery());
         String expectedValue = dateTimeWrapper
             .getOffsetTime()
             .toLocalTime()
@@ -150,7 +152,7 @@ public class HibernateTimeZoneIT {
         dateTimeWrapperRepository.saveAndFlush(dateTimeWrapper);
 
         String request = generateSqlRequest("local_date", dateTimeWrapper.getId());
-        SqlRowSet resultSet = jdbcTemplate.queryForRowSet(request);
+        ResultSet resultSet = jdbcOperations.prepareStatement(request, statement -> statement.executeQuery());
         String expectedValue = dateTimeWrapper
             .getLocalDate()
             .format(dateFormatter);
@@ -162,12 +164,16 @@ public class HibernateTimeZoneIT {
         return format("SELECT %s FROM jhi_date_time_wrapper where id=%d", fieldName, id);
     }
 
-    private void assertThatDateStoredValueIsEqualToInsertDateValueOnGMTTimeZone(SqlRowSet sqlRowSet, String expectedValue) {
-        while (sqlRowSet.next()) {
-            String dbValue = sqlRowSet.getString(1);
+    private void assertThatDateStoredValueIsEqualToInsertDateValueOnGMTTimeZone(ResultSet resultSet, String expectedValue) {
+        try {
+            while (resultSet.next()) {
+                String dbValue = resultSet.getString(1);
 
-            assertThat(dbValue).isNotNull();
-            assertThat(dbValue).isEqualTo(expectedValue);
+                assertThat(dbValue).isNotNull();
+                assertThat(dbValue).isEqualTo(expectedValue);
+            }
+        } catch (SQLException sqe) {
+            fail("Unable to find results");
         }
     }
 }

@@ -236,6 +236,7 @@ dependencies {
     implementation "io.micronaut.configuration:micronaut-micrometer-core" //1.2.0.BUILD-SNAPSHOT
     implementation "io.micronaut.configuration:micronaut-micrometer-registry-prometheus" //1.2.0.BUILD-SNAPSHOT
     implementation "io.micronaut.data:micronaut-data-hibernate-jpa"
+    implementation "io.micronaut.data:micronaut-data-jdbc"
 
     implementation "javax.mail:javax.mail-api:1.6.2"
     // TODO bunch of zalando, those needed?
