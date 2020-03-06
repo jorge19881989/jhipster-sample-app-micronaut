@@ -219,21 +219,20 @@ dependencies {
     annotationProcessor "io.micronaut:micronaut-validation"
     annotationProcessor "io.micronaut.data:micronaut-data-processor:1.0.0"
 
-    implementation "io.micronaut:micronaut-inject"
-    implementation "io.micronaut:micronaut-validation"
-    implementation "io.micronaut:micronaut-runtime"
-    implementation "io.micronaut:micronaut-http-client"
-    implementation "io.micronaut:micronaut-http-server-netty"
-    implementation "io.micronaut:micronaut-management"
+    implementation "io.micronaut:micronaut-inject:$micronaut_version"
+    implementation "io.micronaut:micronaut-validation:$micronaut_version"
+    implementation "io.micronaut:micronaut-runtime:$micronaut_version"
+    implementation "io.micronaut:micronaut-http-client:$micronaut_version"
+    implementation "io.micronaut:micronaut-http-server-netty:$micronaut_version"
+    implementation "io.micronaut:micronaut-management:$micronaut_version"
     implementation "io.micronaut:micronaut-security-jwt"
-    implementation "io.micronaut:micronaut-views-thymeleaf" // 1.3.1
+    implementation "io.micronaut:micronaut-views-thymeleaf"
 
     implementation "org.mindrot:jbcrypt:0.4"
 
     implementation "io.micronaut.configuration:micronaut-liquibase"
     implementation "io.micronaut.configuration:micronaut-jdbc-hikari"
     implementation "io.micronaut.configuration:micronaut-jmx"
-//    implementation "io.micronaut.configuration:micronaut-hibernate-jpa"
     implementation "io.micronaut.configuration:micronaut-micrometer-core" //1.2.0.BUILD-SNAPSHOT
     implementation "io.micronaut.configuration:micronaut-micrometer-registry-prometheus" //1.2.0.BUILD-SNAPSHOT
     implementation "io.micronaut.data:micronaut-data-hibernate-jpa"
@@ -315,3 +314,7 @@ if (project.hasProperty("nodeInstall")) {
     }
 }
 compileJava.dependsOn processResources
+
+run {
+    systemProperties = System.properties
+}
